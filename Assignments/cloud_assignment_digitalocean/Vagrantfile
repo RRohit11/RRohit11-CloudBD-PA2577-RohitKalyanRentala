@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
   # SHELL
   
   nodes = [
-	#{:hostname => "dbserver", :box => "bento/ubuntu-18.04"},
+	{:hostname => "dbserver", :box => "bento/ubuntu-18.04"},
  	{:hostname => "appserver", :box => "bento/ubuntu-18.04"},
   ]
   
