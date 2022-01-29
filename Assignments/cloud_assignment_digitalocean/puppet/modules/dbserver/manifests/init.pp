@@ -1,3 +1,9 @@
+
+# The below code installs the latest package of mysql-server and makes sure that the
+# service is running when the machine starts up.
+# "ensure=>running"ensures service is running.
+
+
 class mysql-server {
 
 	package { ['mysql-server']:

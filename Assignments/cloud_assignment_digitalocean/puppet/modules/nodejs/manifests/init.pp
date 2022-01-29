@@ -1,3 +1,6 @@
+#This manifest contains the provisioning for the appserver. 
+#It installs the node js and curl and runs apt-get update before installations.
+
 class nodejs {
 	package{ 'nodejs':
 			ensure => 'present',

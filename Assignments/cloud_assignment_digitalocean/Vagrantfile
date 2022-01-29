@@ -68,15 +68,26 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
   
+  
+  # Creating servers and specifying the hostnames and box.
+ 
   nodes = [
 	{:hostname => "dbserver", :box => "bento/ubuntu-18.04"},
  	{:hostname => "appserver", :box => "bento/ubuntu-18.04"},
   ]
   
- nodes.each do |node|
+  # In the below loop we provide basic configurations to the server as per the given specifications above. 
+  # The reason I have used a loop in this situation is to reduce manually defining each and every server.
+  # We also configure vagrant to use puppet. 
+  
+  nodes.each do |node|
 	config.vm.define node[:hostname] do |nodeconfig|
 		
 		nodeconfig.vm.synced_folder ".", "/vagrant", type: "rsync"
+		
+		# The following code configures the node to be created with digital ocean as its provider.
+		# We provide the ssh key path and the personal access token for logging into the digital ocean and creating machines on digital ocean.
+		
 		
 		nodeconfig.vm.provider :digital_ocean do |provider, override|
 			override.ssh.private_key_path = 'C:/Tokens/sshkey/keyfile'
@@ -95,9 +106,13 @@ Vagrant.configure("2") do |config|
 			provider.monitoring = false
 		end
 		
+		# The following code configures the node to be creatged locally on virtualbox.
+		
 		nodeconfig.vm.provider :virtualbox do |v, override|
 			override.vm.box = 'bento/ubuntu-18.04'
 		end
+		
+		# Installing puppet for vagrant
 		
 		nodeconfig.vm.provision "shell", inline: <<-SHELL
   		wget https://apt.puppetlabs.com/puppet5-release-$(lsb_release -cs).deb
@@ -113,7 +128,18 @@ Vagrant.configure("2") do |config|
 	end
   end
   
+  
+  # The code below installs the latest version of puppet.
   config.puppet_install.puppet_version = :latest 
+  
+  # The below code provides the locations of the puppet provisionings for the servers.
+  # The main manifest file which contains the node definitions is site.pp which is present in the path puppet/manifests.
+  # site.pp is the puppet manifest file which consists the configurations for each of the nodes.
+  # To make the provisioning easy, each of the provisionings has been divided into different modules.
+  # The modules which contain the puppet provisioning for different servers are present in the path puppet/modules.
+  # Creating the nodes in this way helps make changes to provisioning of multiple server at once and
+  # simple as the changes need to be made once and they are propagated to all nodes.
+ 
   config.vm.provision :puppet do |puppet|
 	puppet.manifests_path = "puppet/manifests"
 	puppet.manifest_file = "site.pp"

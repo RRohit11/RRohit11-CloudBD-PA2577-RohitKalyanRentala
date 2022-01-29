@@ -1,3 +1,5 @@
+# This manifest file was used to install nodejs for the provisioning for puppet module. However this file is no longer referenced in the vagrant file.
+
 package{ 'curl':
         ensure => 'installed',
         require => Exec['apt-get_curl']
